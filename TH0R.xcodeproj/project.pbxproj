@@ -996,7 +996,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/TH0R/headers",
 				);
-				MARKETING_VERSION = "0.7~a";
+				MARKETING_VERSION = 0.8;
 				OTHER_LDFLAGS = (
 					"-framework",
 					IOKit,
@@ -1034,7 +1034,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/TH0R/headers",
 				);
-				MARKETING_VERSION = "0.7~a";
+				MARKETING_VERSION = 0.8;
 				OTHER_LDFLAGS = (
 					"-framework",
 					IOKit,
