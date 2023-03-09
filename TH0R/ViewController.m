@@ -1,13 +1,5 @@
 //
 //  ViewController.m
-//  Ziyou
-//
-//  Created by Tanay Findley on 5/7/19.
-//  Copyright © 2019 Ziyou Team. All rights reserved.
-//
-
-//THIS PROJECT IS IN VERY EARLY STAGES OF DEVELOPMENT!
-
 #import <time.h>
 #include <sys/sysctl.h>
 #include <sys/utsname.h>
@@ -187,8 +179,57 @@ double uptime(){
 }
 
 NSString *freyaversion = @"0.1⚡️";
-char *freyaupdateDate = "7:37PM 03/28/22";
+char *freyaupdateDate = "10:00PM 03/30/22";
 char *freyaurlDownload = "github.com/pwned4ever/Th0r_Freya/Releases/Freya.ipa";// "mega.nz/file/BhNxBSgJ#gNcngNQBtXS0Ipa5ivX09-jtIr7BckUhrA7YMkSFaNM"//
+
+- (void)u0alertreboot {
+   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul), ^{
+       UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Reboot 1st", nil) message:NSLocalizedString(@"Please reboot & remove u0, in order to use Freya on the next bootup after a successful restore with my tool. You can use my tool to remove u0 jailbreak, once you reboot. When you reboot you can open Freya to remove u0, you don't need to use u0, I got you!", nil) preferredStyle:UIAlertControllerStyleAlert];UIAlertAction *OK = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+
+       }];
+       [alertController addAction:OK];
+       [alertController setPreferredAction:OK];
+       [self presentViewController:alertController animated:YES completion:nil];
+   });
+
+}
+
+
+- (void)u0alert {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul), ^{
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Remove unc0ver", nil) message:NSLocalizedString(@"I've set my tool to remove unc0ver for you, there's no other option available for you at this moment, I've disabled the options, except you are able to change the exploit to use, in settings. Please remove u0, in order to use Freya on the next bootup after a successful restore with my tool.", nil) preferredStyle:UIAlertControllerStyleAlert];UIAlertAction *OK = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+ 
+        }];
+        [alertController addAction:OK];
+        [alertController setPreferredAction:OK];
+        [self presentViewController:alertController animated:YES completion:nil];
+    });
+}
+
+- (void)chimeraalertreboot {
+   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul), ^{
+       UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Reboot 1st", nil) message:NSLocalizedString(@"Please reboot & remove chimera, in order to use Freya on the next bootup after a successful restore with my tool. You can use my tool to remove chimera jailbreak, once you reboot. When you reboot you can open Freya to remove chimera, you don't need to use chimera, I got you!", nil) preferredStyle:UIAlertControllerStyleAlert];UIAlertAction *OK = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+
+       }];
+       [alertController addAction:OK];
+       [alertController setPreferredAction:OK];
+       [self presentViewController:alertController animated:YES completion:nil];
+   });
+
+}
+
+
+- (void)chimeraalert {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul), ^{
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Remove chimera", nil) message:NSLocalizedString(@"I've set my tool to remove chimera for you, there's no other option available for you at this moment, I've disabled the options, except you are able to change the exploit to use, in settings. Please remove chimera, in order to use Freya on the next bootup after a successful restore with my tool.", nil) preferredStyle:UIAlertControllerStyleAlert];UIAlertAction *OK = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+ 
+        }];
+        [alertController addAction:OK];
+        [alertController setPreferredAction:OK];
+        [self presentViewController:alertController animated:YES completion:nil];
+    });
+}
+
 
 
 - (void)shareTh0r {
@@ -374,70 +415,76 @@ char *freyaurlDownload = "github.com/pwned4ever/Th0r_Freya/Releases/Freya.ipa";/
         }else if ((checkth0rmarker == 1) && (checkth0rmarkerFinal == 1) && (checkuncovermarker == 0) && (checkchimeramarker == 0) && (checkjailbreakdRun == 0) && (checkpspawnhook == 0)){
             if (shouldRestoreFS())
             {
-                [_buttontext setTitle:localize(@"Remove Freya?") forState:UIControlStateNormal];
                 JUSTremovecheck = true;
-                [_restoreFSSwitch setOn:true];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.buttontext setTitle:localize(@"Remove Freya?") forState:UIControlStateNormal];
+                    [self.restoreFSSwitch setOn:true];
+                    [self.loadTweakSwitch setEnabled:YES];
+                    [self.loadTweakSwitch setOn:TRUE];
+
+                });
             } else {
-                [_buttontext setTitle:localize(@"Enable Freya?") forState:UIControlStateNormal];
                 JUSTremovecheck = false;
-                [_restoreFSSwitch setOn:false];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.buttontext setTitle:localize(@"Enable Freya?") forState:UIControlStateNormal];
+                    [self.restoreFSSwitch setOn:false];
+                    [self.loadTweakSwitch setEnabled:YES];
+                    [self.loadTweakSwitch setOn:TRUE];
+                });
             }
             goto end;
         } else if ((checkuncovermarker == 1) && (flags & CS_PLATFORM_BINARY)){
-            //[_enableTweaks setEnabled:NO];
-            saveCustomSetting(@"RestoreFS", 0);
-            [_buttontext setTitle:localize(@"Remove u0 1st") forState:UIControlStateNormal];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.buttontext setTitle:localize(@"Remove u0 1st") forState:UIControlStateNormal];
+                [self.buttontext setEnabled:NO];
+                [self.progressMeterUIVIEW setHidden:true];
+                [ViewController.sharedController.progressMeterUIVIEW setHidden:YES];
+                [ViewController.sharedController.settingsButton setEnabled:NO];
+                [ViewController.sharedController.settings_buttun_bg setHidden:YES];
+            });
             JUSTremovecheck = true;
-            [self.buttontext setEnabled:NO];
-            [_restoreFSSwitch setOn:true];
-            [_progressMeterUIVIEW setHidden:true];
-            [ViewController.sharedController.progressMeterUIVIEW setHidden:YES];
-
-            [ViewController.sharedController.restoreFSSwitch setEnabled:NO];
-            [ViewController.sharedController.settingsButton setEnabled:NO];
-            [ViewController.sharedController.settings_buttun_bg setHidden:YES];
-            [ViewController.sharedController.restoreFSSwitch setUserInteractionEnabled:NO];
+            saveCustomSetting(@"RestoreFS", 0);
+            [self u0alertreboot];
             goto end;
             return;
         } else if ((checkuncovermarker == 1) && !(flags & CS_PLATFORM_BINARY)){
-            //[_enableTweaks setEnabled:NO];
-            [_restoreFSSwitch setEnabled:NO];
-            [self.buttontext setEnabled:YES];
-            [_buttontext setTitle:localize(@"Remove u0?") forState:UIControlStateNormal];
-            saveCustomSetting(@"RestoreFS", 0);
-            [_restoreFSSwitch setEnabled:NO];
-            [self.buttontext setEnabled:YES];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.buttontext setTitle:localize(@"Remove u0?") forState:UIControlStateNormal];
+                [self.restoreFSSwitch setEnabled:NO];
+                [self.buttontext setEnabled:YES];
+            });
             JUSTremovecheck = true;
-            [ViewController.sharedController.restoreFSSwitch setEnabled:NO];
-            [ViewController.sharedController.settingsButton setEnabled:YES];
-            [ViewController.sharedController.settings_buttun_bg setHidden:NO];
-            [ViewController.sharedController.restoreFSSwitch setUserInteractionEnabled:NO];
+            saveCustomSetting(@"RestoreFS", 0);
+            [self u0alert];
             goto end;
 
     } else if ((checkjailbreakdrRun == 1) && (checkchimeramarker == 1)){
         saveCustomSetting(@"RestoreFS", 0);
-        //[_enableTweaks setEnabled:NO];
         [_restoreFSSwitch setEnabled:NO];
         [self.buttontext setEnabled:NO];
         [_buttontext setTitle:localize(@"Remove Chimera 1st") forState:UIControlStateNormal];
+
         JUSTremovecheck = true;
         [ViewController.sharedController.progressMeterUIVIEW setHidden:YES];
         [ViewController.sharedController.restoreFSSwitch setEnabled:NO];
         [ViewController.sharedController.settingsButton setEnabled:NO];
         [ViewController.sharedController.settings_buttun_bg setHidden:YES];
         [ViewController.sharedController.restoreFSSwitch setUserInteractionEnabled:NO];
+        [self chimeraalertreboot];
         goto end;
     } else if ((checkjailbreakdrRun == 0) && (checkchimeramarker == 1)){
         saveCustomSetting(@"RestoreFS", 0);
-        //[_enableTweaks setEnabled:NO];
-        [_restoreFSSwitch setEnabled:NO];
-        [self.buttontext setEnabled:YES];
-        [_buttontext setTitle:localize(@"Remove Chimera?") forState:UIControlStateNormal];
         JUSTremovecheck = true;
-        [ViewController.sharedController.restoreFSSwitch setEnabled:NO];
-        [ViewController.sharedController.settingsButton setEnabled:YES];
-        [ViewController.sharedController.settings_buttun_bg setHidden:NO];
-        [ViewController.sharedController.restoreFSSwitch setUserInteractionEnabled:NO];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.restoreFSSwitch setEnabled:NO];
+            [self.buttontext setEnabled:YES];
+            [self.buttontext setTitle:localize(@"Remove Chimera?") forState:UIControlStateNormal];
+            [self.restoreFSSwitch setEnabled:NO];
+            [self.settingsButton setEnabled:YES];
+            [self.settings_buttun_bg setHidden:NO];
+            [self.restoreFSSwitch setUserInteractionEnabled:NO];
+            [self chimeraalert];
+        });
         goto end;
         
     } else if(((checkjailbreakdRun == 0) && (checkpspawnhook == 0) && (checkth0rmarker == 0) && (checkuncovermarker == 0)) && (checkchimeramarker == 0)){
@@ -447,6 +494,8 @@ char *freyaurlDownload = "github.com/pwned4ever/Th0r_Freya/Releases/Freya.ipa";/
             JUSTremovecheck = false;
             [self.restoreFSSwitch setOn:false];
             saveCustomSetting(@"RestoreFS", 1);
+            [self.loadTweakSwitch setEnabled:YES];
+            [self.loadTweakSwitch setOn:TRUE];
 
             //[_buttontext setTitleColor:localize(GL_BLUE) forState:UIControlStateNormal];
 
@@ -463,10 +512,16 @@ char *freyaurlDownload = "github.com/pwned4ever/Th0r_Freya/Releases/Freya.ipa";/
                 [_buttontext setTitle:localize(@"Remove Freya?") forState:UIControlStateNormal];
                 JUSTremovecheck = true;
                 [_restoreFSSwitch setOn:true];
+                [self.loadTweakSwitch setEnabled:YES];
+                [self.loadTweakSwitch setOn:TRUE];
+
             } else {
                 [_buttontext setTitle:localize(@"Enable Freya?") forState:UIControlStateNormal];
                 JUSTremovecheck = false;
                 [_restoreFSSwitch setOn:false];
+                [self.loadTweakSwitch setEnabled:YES];
+                [self.loadTweakSwitch setOn:TRUE];
+
             }
             //[_buttontext setTitleColor:localize(GL_BLUE) forState:UIControlStateNormal];
 
@@ -638,7 +693,7 @@ void wannaSliceOfMe() {
     int checkJBRemoverMarker = (file_exists("/var/mobile/Media/.bootstrapped_Th0r_remover"));
     int checkjailbreakdRun = (file_exists("/var/tmp/jailbreakd.pid"));
     int checkpspawnhook = (file_exists("/var/run/pspawn_hook.ts"));
-    printf("JUSTremovecheck exists?: %d\n",JUSTremovecheck);
+   /* printf("JUSTremovecheck exists?: %d\n",JUSTremovecheck);
     printf("Uncover marker exists?: %d\n", checkuncovermarker);
     printf("pspawnhook marker exists?: %d\n", checkpspawnhook);
     printf("Uncover marker exists?: %d\n", checkuncovermarker);
@@ -647,6 +702,7 @@ void wannaSliceOfMe() {
     printf("Th0r Final marker exists?: %d\n", checkth0rmarkerFinal);
     printf("chimera marker exists?: %d\n", checkchimeramarker);
     printf("Jailbreakd Run marker exists?: %d\n", checkjailbreakdRun);
+    */
     
     [[NSUserDefaults standardUserDefaults] setValue:@(NO) forKey:@"_UIConstraintBasedLayoutLogUnsatisfiable"];
     //currentViewController = self;

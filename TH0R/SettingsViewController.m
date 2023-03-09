@@ -1,10 +1,6 @@
 //
 //  SettingsViewViewController.m
-//  Ziyou
-//
-//  Created by Tanay Findley on 6/29/19.
-//  Copyright © 2019 Ziyou Team. All rights reserved.
-//
+
 
 #import "SettingsViewController.h"
 #import "ViewController.h"
@@ -92,27 +88,33 @@
     if ((checkuncovermarker == 0) && (checkchimeramarker == 1) && (checkth0rmarker == 0)){
         [ViewController.sharedController.buttontext setTitle:localize(@"Remove Chimera?") forState:UIControlStateNormal];
         newTFcheckMyRemover4me = TRUE;
-        saveCustomSetting(@"RestoreFS", 0);
-        [_restoreFSSwitch setEnabled:NO];
-        //[_restoreFSSwitch setHidden:YES];
-        [_restoreFSSwitch setUserInteractionEnabled:NO];
         JUSTremovecheck = true;
+        saveCustomSetting(@"RestoreFS", 0);
+        [_loadTweaksSwitch setEnabled:YES];
+        [_loadTweaksSwitch setOn:TRUE];
+
+        [_loadTweaksSwitch setUserInteractionEnabled:NO];
+        [_restoreFSSwitch setEnabled:NO];
+        [_restoreFSSwitch setUserInteractionEnabled:NO];
         [ViewController.sharedController.restoreFSSwitch setEnabled:NO];
         [ViewController.sharedController.restoreFSSwitch setUserInteractionEnabled:NO];
         //    goto end;
     } else if ((checkuncovermarker == 1) && (checkchimeramarker == 0) && (checkth0rmarker == 0)){
         [ViewController.sharedController.buttontext setTitle:localize(@"Remove u0?") forState:UIControlStateNormal];
         newTFcheckMyRemover4me = TRUE;
-        saveCustomSetting(@"RestoreFS", 0);
-        [_restoreFSSwitch setEnabled:NO];
-        //[_restoreFSSwitch setHidden:YES];
-        [_restoreFSSwitch setUserInteractionEnabled:NO];
         JUSTremovecheck = true;
+        saveCustomSetting(@"RestoreFS", 0);
+        [_loadTweaksSwitch setEnabled:YES];
+        [_loadTweaksSwitch setOn:TRUE];
+        [_loadTweaksSwitch setUserInteractionEnabled:NO];
+        [_restoreFSSwitch setEnabled:NO];
+        [_restoreFSSwitch setUserInteractionEnabled:NO];
         [ViewController.sharedController.restoreFSSwitch setEnabled:NO];
         [ViewController.sharedController.restoreFSSwitch setUserInteractionEnabled:NO];
         //    goto end;
     }
-    
+
+
     if (shouldRestoreFS())
     {
         //[ViewController.sharedController.buttontext setTitle:localize(@"Remove Freya?") forState:UIControlStateNormal];

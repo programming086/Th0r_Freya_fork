@@ -1289,14 +1289,19 @@ void restoreRootFS()
 {
     int checkuncovermarker = (file_exists("/.installed_unc0ver"));
     int checkth0rmarker = (file_exists("/.freya_bootstrap"));
+    int checkbash = (file_exists("/bin/bash"));
+    int checkuicache = (file_exists("/usr/bin/uicache"));
+    
     int checkth0rmarkerFinal = (file_exists("/.freya_installed"));
     int checkchimeramarker = (file_exists("/.procursus_strapped"));
     int checkJBRemoverMarker = (file_exists("/var/mobile/Media/.bootstrapped_Th0r_remover"));
     int checkjailbreakdRun = (file_exists("/var/tmp/jailbreakd.pid"));
     int checkpspawnhook = (file_exists("/var/run/pspawn_hook.ts"));
     printf("JUSTremovecheck exists?: %d\n",JUSTremovecheck);
+    printf("checkuicache marker exists?: %d\n", checkuicache);
     printf("Uncover marker exists?: %d\n", checkuncovermarker);
     printf("pspawnhook marker exists?: %d\n", checkpspawnhook);
+    printf("checkbash marker exists?: %d\n", checkbash);
     printf("Uncover marker exists?: %d\n", checkuncovermarker);
     printf("JBRemover marker exists?: %d\n", checkJBRemoverMarker);
     printf("Th0r marker exists?: %d\n", checkth0rmarker);
@@ -1332,7 +1337,7 @@ void restoreRootFS()
     
     
     if (checkuncovermarker == 1) {
-        char *const systemSnapshotMountPoint = "/private/var/tmp/jb/mnt1";
+        char *const systemSnapshotMountPoint = "/var/rootfsmnt";
         if (is_mountpoint(systemSnapshotMountPoint)) {
             _assert(unmount(systemSnapshotMountPoint, MNT_FORCE) == ERR_SUCCESS, localize(@"Unable to unmount old snapshot mount point."), true);
         }
@@ -1341,16 +1346,20 @@ void restoreRootFS()
         _assert(fs_snapshot_mount(rootfd, systemSnapshotMountPoint, snapshot, 0) == ERR_SUCCESS, localize(@"Unable to mount original snapshot."), true);
         const char *systemSnapshotLaunchdPath = [@(systemSnapshotMountPoint) stringByAppendingPathComponent:@"sbin/launchd"].UTF8String;
         _assert(waitFF(systemSnapshotLaunchdPath) == ERR_SUCCESS, localize(@"Unable to verify mounted snapshot."), true);
-        _assert(clean_file("/usr/bin/uicache"), localize(@"Unable to clean old uicache binary."), true);
-        unlink("/usr/bin/uicache");
-        removeFileIfExists("/usr/bin/uicache");
-        extractFile(get_bootstrap_file(@"restoreUtils.tar"), @"/");
-        _assert(execCmd("/usr/bin/rsync", "-vaxcH", "--progress", "--delete", [@(systemSnapshotMountPoint) stringByAppendingPathComponent:@"Applications/."].UTF8String, "/Applications", NULL) == 0, localize(@"Unable to sync /Applications."), true);
+        //int runtest = execCmd("/bin/bash", NULL);
+        if (checkbash == 1) {
+            _assert(clean_file("/usr/bin/uicache"), localize(@"Unable to clean old uicache binary."), true);
+            unlink("/usr/bin/uicache");
+            removeFileIfExists("/usr/bin/uicache");
+            
+            extractFile(get_bootstrap_file(@"restoreUtils.tar"), @"/");
+            _assert(execCmd("/usr/bin/rsync", "-vaxcH", "--progress", "--delete", [@(systemSnapshotMountPoint) stringByAppendingPathComponent:@"Applications/."].UTF8String, "/Applications", NULL) == 0, localize(@"Unable to sync /Applications."), true);
+        }
         _assert(unmount(systemSnapshotMountPoint, MNT_FORCE) == ERR_SUCCESS, localize(@"Unable to unmount original snapshot mount point."), true);
         close(rootfd);
         
     } else {
-        char *const systemSnapshotMountPoint = "/var/MobileSoftwareUpdate/mnt1";
+        char *const systemSnapshotMountPoint = "/var/rootfsmnt";
         if (is_mountpoint(systemSnapshotMountPoint)) {
             _assert(unmount(systemSnapshotMountPoint, MNT_FORCE) == ERR_SUCCESS, localize(@"Unable to unmount old snapshot mount point."), true);
         }
@@ -1359,11 +1368,15 @@ void restoreRootFS()
         _assert(fs_snapshot_mount(rootfd, systemSnapshotMountPoint, snapshot, 0) == ERR_SUCCESS, localize(@"Unable to mount original snapshot."), true);
         const char *systemSnapshotLaunchdPath = [@(systemSnapshotMountPoint) stringByAppendingPathComponent:@"sbin/launchd"].UTF8String;
         _assert(waitFF(systemSnapshotLaunchdPath) == ERR_SUCCESS, localize(@"Unable to verify mounted snapshot."), true);
-        _assert(clean_file("/usr/bin/uicache"), localize(@"Unable to clean old uicache binary."), true);
-        unlink("/usr/bin/uicache");
-        removeFileIfExists("/usr/bin/uicache");
-        extractFile(get_bootstrap_file(@"restoreUtils.tar"), @"/");
-        _assert(execCmd("/usr/bin/rsync", "-vaxcH", "--progress", "--delete", [@(systemSnapshotMountPoint) stringByAppendingPathComponent:@"Applications/."].UTF8String, "/Applications", NULL) == 0, localize(@"Unable to sync /Applications."), true);
+        //int runtest = execCmd("/bin/bash", NULL);
+        if (checkbash == 1) {
+            _assert(clean_file("/usr/bin/uicache"), localize(@"Unable to clean old uicache binary."), true);
+            unlink("/usr/bin/uicache");
+            removeFileIfExists("/usr/bin/uicache");
+            
+            extractFile(get_bootstrap_file(@"restoreUtils.tar"), @"/");
+            _assert(execCmd("/usr/bin/rsync", "-vaxcH", "--progress", "--delete", [@(systemSnapshotMountPoint) stringByAppendingPathComponent:@"Applications/."].UTF8String, "/Applications", NULL) == 0, localize(@"Unable to sync /Applications."), true);
+        }
         _assert(unmount(systemSnapshotMountPoint, MNT_FORCE) == ERR_SUCCESS, localize(@"Unable to unmount original snapshot mount point."), true);
         close(rootfd);
         
@@ -1377,16 +1390,19 @@ void restoreRootFS()
     snapshots = NULL;
     if (checkuncovermarker == 1) {
 
-        _assert(clean_file("/private/var/tmp/jb/mnt1"), localize(@"Unable to clean mnt1."), true);
+        //_assert(clean_file("/private/var/tmp/jb/mnt1"), localize(@"Unable to clean mnt1."), true);
     }
     else {
-        _assert(clean_file("/var/MobileSoftwareUpdate/mnt1"), localize(@"Unable to clean mnt1."), true);
+        //_assert(clean_file("/var/MobileSoftwareUpdate/mnt1"), localize(@"Unable to clean mnt1."), true);
 
     }
-    uicaching("uicache");
-    _assert(execCmd("/usr/bin/uicache", NULL) >= 0, localize(@"Unable to refresh icon cache."), true);
-    _assert(clean_file("/usr/bin/uicache"), localize(@"Unable to clean uicache binary."), true);
+    if (checkuicache == 1) {
 
+        uicaching("uicache");
+        _assert(execCmd("/usr/bin/uicache", NULL) >= 0, localize(@"Unable to refresh icon cache."), true);
+        _assert(clean_file("/usr/bin/uicache"), localize(@"Unable to clean uicache binary."), true);
+    }
+    
     _assert(clean_file("/usr/bin/find"), localize(@"Unable to clean find binary."), true);
     util_info("Successfully reverted back RootFS remount.");
     
@@ -1400,7 +1416,6 @@ void restoreRootFS()
                                        @"/var/mobile/Library/Cydia",
                                        @"/var/mobile/Library/Caches/com.saurik.Cydia",
                                        @"/etc/apt/sources.list.d",
-                                       @"/var/MobileSoftwareUpdate/mnt1",
                                        @"/etc/apt/sources.list",
                                        @"/private/etc/apt",
                                        @"/private/etc/alternatives",
@@ -1426,11 +1441,9 @@ void restoreRootFS()
                                        @"/private/var/log/jailbreakd-stdout.log",
                                        @"/private/var/backups",
                                        @"/private/var/empty",
-                                       
                                        @"/private/var/bin",
                                        @"/private/var/cache",
                                        @"/private/var/cercube_stashed",
-
                                        @"/private/var/db/stash",
                                        @"/private/var/dropbear",
                                        @"/private/var/Ext3nder-Installer",
@@ -1440,23 +1453,16 @@ void restoreRootFS()
                                        @"/private/var/local",
                                        @"/private/var/log/apt",
                                        @"/private/var/log/dpkg",
-                                      // @"/private/var/db/sudo", NULL, NULL }, (char **)&myenviron);
-                                        //waitpid(pd, NULL, 0);
-
                                        @"/private/var/log/testbin.log",
                                        @"/private/var/lock",
                                        @"/private/var/mobile/Library/Activator",
                                        @"/private/var/mobile/Library/Preferences/ws.hbang.Terminal.plist",
                                        @"/private/var/mobile/Library/SplashBoard/Snapshots/com.saurik.Cydia",
-
                                        @"/private/var/mobile/Library/Application\ Support/Activator",
                                        @"/private/var/mobile/Library/Application\ Support/Flex3",
                                        @"/private/var/mobile/Library/Saved\ Application\ State/ws.hbang.Terminal.savedState",
                                        @"/private/var/mobile/Library/Saved\ Application\ State/org.coolstar.SileoStore.savedState",
                                        @"/private/var/mobile/Library/Saved\ Application\ State/com.saurik.Cydia.savedState",
-                                   //    @"/private/var/mobile/Library/UserNotificationsServer/Library.plist/root/objects/item###/com.tigisoftware.Filza", NULL, NULL }, (char **)&myenviron);
-                                   //    waitpid(pd, NULL, 0);
-
                                        @"/private/var/mobile/Library/com.saurik.Cydia",
                                        @"/private/var/mobile/Library/Cr4shed",
                                        @"/private/var/mobile/Library/CT4",
@@ -1467,9 +1473,7 @@ void restoreRootFS()
                                        @"/private/var/mobile/Library/Fingal",
                                        @"/private/var/mobile/Library/iWidgets",
                                        @"/private/var/mobile/Library/LockHTML",
-                                       
                                        @"/private/var/mobile/Library/Logs/Cydia",
-                                       
                                        @"/private/var/mobile/Library/Notchification",
                                        @"/private/var/mobile/Library/unlimapps_tweaks_resources",
                                        @"/private/var/mobile/Library/Sileo",
@@ -1491,9 +1495,7 @@ void restoreRootFS()
                                        @"/private/var/mobile/Library/Caches/Snapshots/ws.hbang.Terminal",
                                        @"/private/var/mobile/Library/Caches/Snapshots/org.coolstar.Sileo",
                                        @"/private/var/mobile/Library/Preferences/com.saurik.Cydia.plist",
-
                                        @"/private/var/mobile/Library/libactivator.plist",
-
                                        @"/private/var/motd",
                                        @"/private/var/profile",
                                        @"/private/var/run/pspawn_hook.ts",
@@ -1557,7 +1559,6 @@ void restoreRootFS()
                                        @"/usr/share/p11-kit",
                                        @"/usr/share/tabset",
                                        @"/usr/share/terminfo",
-                                       
                                        @"/.freya_installed",
                                        @"/.freya_bootstrap"];
     for (id file in cleanUpFileList) {
@@ -1822,86 +1823,92 @@ void remountFS(bool shouldRestore) {
             reboot(RB_QUICK);
         });
         
-    }
-    //  bootstrap rootfs
-    //NSString *dir = [[NSBundle mainBundle] bundlePath];
-    //[[[NSBundle mainBundle] bundlePath] stringByAppendingString:@"/bootstrap/DEBS/"];
-    //[[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:dir("rootfs")] toPath:@"/tmp/rootfs" error:nil];
-    //chmod("/tmp/rootfs", 0755);
-    
-    //  Remount RootFS
-    /*if(!remount(get_proc_struct_for_pid(1)))
-    {
-        util_error("Failed to remount rootfs!");
-    }
-*/
-    
-    /*FILE *f = fopen("/.remount_success", "w");
-    fprintf(f,"Hello World!\n");
-    fclose(f);
-
-    if(access("/.remount_success", F_OK) == -1) {
-        util_info("Failed write file on rootfs.");
+    } else if (need_initialSSRenamed == 2) {
+        if (shouldRestore)
+        {
+            restoreRootFS();
+        }
         
-    }
-    util_info("Successfully write file on rootfs.");
-    unlink("/.remount_success");
-*/
-    
-
-    
-    int root_fs = open("/", O_RDONLY);
-    
-    _assert(root_fs > 0, @"Error Opening The Root Filesystem!", true);
-    
-    const char **snapshots = snapshot_list(root_fs);
-    const char *origfs = "orig-fs";
-    bool isOriginalFS = false;
-    const char *root_disk = "/dev/disk0s1s1";
-    
-    if (snapshots == NULL) {
+    } else {
+        //  bootstrap rootfs
+        //NSString *dir = [[NSBundle mainBundle] bundlePath];
+        //[[[NSBundle mainBundle] bundlePath] stringByAppendingString:@"/bootstrap/DEBS/"];
+        //[[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:dir("rootfs")] toPath:@"/tmp/rootfs" error:nil];
+        //chmod("/tmp/rootfs", 0755);
         
-        util_info("No System Snapshot Found! Don't worry, I'll Make One!");
-
-        //Clear Dev Flags
-        uint64_t devVnode = vnodeForPath(root_disk);
-        _assert(ISADDR(devVnode), @"Failed to clear dev vnode's si_flags.", true);
-        uint64_t v_specinfo = ReadKernel64(devVnode + koffset(KSTRUCT_OFFSET_VNODE_VU_SPECINFO));
-        _assert(ISADDR(v_specinfo), @"Failed to clear dev vnode's si_flags.", true);
-        WriteKernel32(v_specinfo + koffset(KSTRUCT_OFFSET_SPECINFO_SI_FLAGS), 0);
-        uint32_t si_flags = ReadKernel32(v_specinfo + koffset(KSTRUCT_OFFSET_SPECINFO_SI_FLAGS));
-        _assert(si_flags == 0, @"Failed to clear dev vnode's si_flags.", true);
-        _assert(_vnode_put(devVnode) == ERR_SUCCESS, @"Failed to clear dev vnode's si_flags.", true);
+        //  Remount RootFS
+        /*if(!remount(get_proc_struct_for_pid(1)))
+        {
+            util_error("Failed to remount rootfs!");
+        }
+    */
         
-        //Pre-Mount
-        preMountFS(root_disk, root_fs, snapshots, origfs);
+        /*FILE *f = fopen("/.remount_success", "w");
+        fprintf(f,"Hello World!\n");
+        fclose(f);
+
+        if(access("/.remount_success", F_OK) == -1) {
+            util_info("Failed write file on rootfs.");
+            
+        }
+        util_info("Successfully write file on rootfs.");
+        unlink("/.remount_success");
+    */
         
-        close(root_fs);
-    }
 
-    list_all_snapshots(snapshots, origfs, isOriginalFS);
+        
+        int root_fs = open("/", O_RDONLY);
+        
+        _assert(root_fs > 0, @"Error Opening The Root Filesystem!", true);
+        
+        const char **snapshots = snapshot_list(root_fs);
+        const char *origfs = "orig-fs";
+        bool isOriginalFS = false;
+        const char *root_disk = "/dev/disk0s1s1";
+        
+        if (snapshots == NULL) {
+            
+            util_info("No System Snapshot Found! Don't worry, I'll Make One!");
 
-    uint64_t rootfs_vnode = vnodeForPath("/");
-    LOG("rootfs_vnode = " ADDR, rootfs_vnode);
-    _assert(ISADDR(rootfs_vnode), @"Failed to mount", true);
-    uint64_t v_mount = ReadKernel64(rootfs_vnode + koffset(KSTRUCT_OFFSET_VNODE_V_MOUNT));
-    LOG("v_mount = " ADDR, v_mount);
-    _assert(ISADDR(v_mount), @"Failed to mount", true);
-    uint32_t v_flag = ReadKernel32(v_mount + koffset(KSTRUCT_OFFSET_MOUNT_MNT_FLAG));
-    if ((v_flag & (MNT_RDONLY | MNT_NOSUID))) {
-        v_flag = v_flag & ~(MNT_RDONLY | MNT_NOSUID);
-        WriteKernel32(v_mount + koffset(KSTRUCT_OFFSET_MOUNT_MNT_FLAG), v_flag & ~MNT_ROOTFS);
-        _assert(execCmd("/sbin/mount", "-u", root_disk, NULL) == ERR_SUCCESS, @"Failed to mount", true);
-        WriteKernel32(v_mount + koffset(KSTRUCT_OFFSET_MOUNT_MNT_FLAG), v_flag);
-    }
-    _assert(_vnode_put(rootfs_vnode) == ERR_SUCCESS, @"Failed to mount", true);
-    _assert(execCmd("/sbin/mount", NULL) == ERR_SUCCESS, @"Failed to mount", true);
-    
-    if (shouldRestore)
-    {
-        restoreRootFS();
-    }
+            //Clear Dev Flags
+            uint64_t devVnode = vnodeForPath(root_disk);
+            _assert(ISADDR(devVnode), @"Failed to clear dev vnode's si_flags.", true);
+            uint64_t v_specinfo = ReadKernel64(devVnode + koffset(KSTRUCT_OFFSET_VNODE_VU_SPECINFO));
+            _assert(ISADDR(v_specinfo), @"Failed to clear dev vnode's si_flags.", true);
+            WriteKernel32(v_specinfo + koffset(KSTRUCT_OFFSET_SPECINFO_SI_FLAGS), 0);
+            uint32_t si_flags = ReadKernel32(v_specinfo + koffset(KSTRUCT_OFFSET_SPECINFO_SI_FLAGS));
+            _assert(si_flags == 0, @"Failed to clear dev vnode's si_flags.", true);
+            _assert(_vnode_put(devVnode) == ERR_SUCCESS, @"Failed to clear dev vnode's si_flags.", true);
+            
+            //Pre-Mount
+            preMountFS(root_disk, root_fs, snapshots, origfs);
+            
+            close(root_fs);
+        }
 
+        list_all_snapshots(snapshots, origfs, isOriginalFS);
+
+        uint64_t rootfs_vnode = vnodeForPath("/");
+        LOG("rootfs_vnode = " ADDR, rootfs_vnode);
+        _assert(ISADDR(rootfs_vnode), @"Failed to mount", true);
+        uint64_t v_mount = ReadKernel64(rootfs_vnode + koffset(KSTRUCT_OFFSET_VNODE_V_MOUNT));
+        LOG("v_mount = " ADDR, v_mount);
+        _assert(ISADDR(v_mount), @"Failed to mount", true);
+        uint32_t v_flag = ReadKernel32(v_mount + koffset(KSTRUCT_OFFSET_MOUNT_MNT_FLAG));
+        if ((v_flag & (MNT_RDONLY | MNT_NOSUID))) {
+            v_flag = v_flag & ~(MNT_RDONLY | MNT_NOSUID);
+            WriteKernel32(v_mount + koffset(KSTRUCT_OFFSET_MOUNT_MNT_FLAG), v_flag & ~MNT_ROOTFS);
+            _assert(execCmd("/sbin/mount", "-u", root_disk, NULL) == ERR_SUCCESS, @"Failed to mount", true);
+            WriteKernel32(v_mount + koffset(KSTRUCT_OFFSET_MOUNT_MNT_FLAG), v_flag);
+        }
+        _assert(_vnode_put(rootfs_vnode) == ERR_SUCCESS, @"Failed to mount", true);
+        _assert(execCmd("/sbin/mount", NULL) == ERR_SUCCESS, @"Failed to mount", true);
+        
+        if (shouldRestore)
+        {
+            restoreRootFS();
+        }
+    }
     
 }
 

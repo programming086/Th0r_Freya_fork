@@ -34,8 +34,11 @@ static char* mntpathSW;
 static char* mntpath;
 
 bool remount(uint64_t launchd_proc) {
-    mntpathSW = "/var/MobileSoftwareUpdate/mnt1";
-    mntpath = strdup("/var/MobileSoftwareUpdate/mnt1");
+    //let mntpathSW = "/var/rootfsmnt" ios 13 odyssey
+   // let mntpath = strdup("/var/rootfsmnt")
+    
+    mntpathSW = "/var/rootfsmnt";
+    mntpath = strdup("/var/rootfsmnt");
     uint64_t rootvnode = findRootVnode(launchd_proc);
     printf("rootvnode: 0x%llx\n", rootvnode);
     
@@ -56,6 +59,7 @@ bool remount(uint64_t launchd_proc) {
         uint64_t selfCreds = ReadKernel64(get_proc_struct_for_pid(getpid()) + koffset(KSTRUCT_OFFSET_PROC_UCRED));
         WriteKernel64(get_proc_struct_for_pid(getpid()) + koffset(KSTRUCT_OFFSET_PROC_UCRED), kernCreds);
         grabEntitlementsForRootFS(get_proc_struct_for_pid(getpid()));
+        
         char* bootSnapshot = find_boot_snapshot();
         if(!bootSnapshot
            || mountRealRootfs(rootvnode)) {
@@ -65,7 +69,7 @@ bool remount(uint64_t launchd_proc) {
             return false;
         }
         
-        int fd = open("/var/MobileSoftwareUpdate/mnt1", O_RDONLY, 0);
+        int fd = open("/var/rootfsmnt", O_RDONLY, 0);
         if(fd <= 0
            || fs_snapshot_revert(fd, bootSnapshot, 0) != 0) {
             printf("fs_snapshot_revert failed\n");
@@ -96,7 +100,7 @@ bool remount(uint64_t launchd_proc) {
             return false;
         }
         
-        int fd2 = open("/var/MobileSoftwareUpdate/mnt1", O_RDONLY, 0);
+        int fd2 = open("/var/rootfsmnt", O_RDONLY, 0);
         if(fd <= 0
            || fs_snapshot_rename(fd2, bootSnapshot, "orig-fs", 0) != 0) {
             printf("fs_snapshot_rename failed\n");
@@ -110,7 +114,8 @@ bool remount(uint64_t launchd_proc) {
         unmount(mntpath, 0);
         
         [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithUTF8String:mntpath] error:nil];
-        
+        unlink(mntpath);
+        rmdir(mntpath);
         resetEntitlementsForRootFS(get_proc_struct_for_pid(getpid()));
         WriteKernel64(get_proc_struct_for_pid(getpid()) + koffset(KSTRUCT_OFFSET_PROC_UCRED), selfCreds);
         
@@ -122,21 +127,26 @@ bool remount(uint64_t launchd_proc) {
         //sleep(5);
         //reboot(0);
     } else {
-        return true;
-       /* uint64_t vmount = ReadKernel64(rootvnode + koffset(KSTRUCT_OFFSET_VNODE_V_MOUNT));
+        usleep(1000);
+        uint64_t vmount = ReadKernel64(rootvnode + koffset(KSTRUCT_OFFSET_VNODE_V_MOUNT));
         uint32_t vflag = ReadKernel32(vmount + koffset(KSTRUCT_OFFSET_MOUNT_MNT_FLAG)) & ~(MNT_RDONLY);
         WriteKernel32(vmount + koffset(KSTRUCT_OFFSET_MOUNT_MNT_FLAG), vflag & ~(MNT_ROOTFS));
-        
+        usleep(1000);
+
         char* dev_path = strdup("/dev/disk0s1s1");
         int retval = mount("apfs", "/", MNT_UPDATE, &dev_path);
         free(dev_path);
-        
+        usleep(1000);
+
         WriteKernel32(vmount + koffset(KSTRUCT_OFFSET_MOUNT_MNT_FLAG), vflag | (MNT_NOSUID));
+        usleep(1000);
         if(retval == 0) {
             printf("Already remounted RootFS!\n");
+            need_initialSSRenamed = 2;
+
             return true;
         }
-        return false;*/
+        return false;
         
     }
     return true;
