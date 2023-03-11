@@ -1025,7 +1025,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0;
 				DEVELOPMENT_TEAM = 3UPD288LR6;
-				ENABLE_BITCODE = YES;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Freya/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Freya;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -1038,7 +1038,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Freya/headers",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.3.1;
 				OTHER_LDFLAGS = (
 					"-framework",
 					IOKit,
@@ -1062,7 +1062,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0;
 				DEVELOPMENT_TEAM = 3UPD288LR6;
-				ENABLE_BITCODE = YES;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Freya/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Freya;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -1075,7 +1075,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Freya/headers",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.3.1;
 				OTHER_LDFLAGS = (
 					"-framework",
 					IOKit,
